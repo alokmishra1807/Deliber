@@ -1,5 +1,5 @@
 import 'package:deliber/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:deliber/core/error/design/gradientButton.dart';
+import 'package:deliber/core/design/gradientButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

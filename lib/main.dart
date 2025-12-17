@@ -1,5 +1,6 @@
 import 'package:deliber/features/landing/presentation/bloc/onboarding_bloc.dart';
 import 'package:deliber/features/landing/presentation/pages/onboarding_page.dart';
+import 'package:deliber/features/location/presentation/bloc/location_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -33,6 +34,10 @@ class MyApp extends StatelessWidget {
           create: (_) =>
               serviceLocator<OnboardingBloc>()..add(CheckOnboarding()),
         ),
+         BlocProvider<LocationBloc>(
+          create: (_) => serviceLocator<LocationBloc>(),
+        ),
+         
       ],
       child: MaterialApp(
         title: 'Deliber',
@@ -52,47 +57,52 @@ class AppGate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<OnboardingBloc, OnboardingState>(
-      builder: (context, onboardingState) {
-      
-        if (onboardingState is OnboardingInitial) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
+    return BlocListener<OnboardingBloc, OnboardingState>(
+      listener: (context, onboardingState) {
+        if (onboardingState is OnboardingCompleted) {
+          context.read<LocationBloc>().add(RequestLocation());
         }
-
-        
-        if (onboardingState is OnboardingRequired) {
-          return const OnboardingView();
-        }
-
-       
-        return BlocBuilder<AuthBloc, AuthState>(
-          builder: (context, authState) {
-            if (authState is AuthInitial || authState is AuthLoading) {
-              return const Scaffold(
-                body: Center(child: CircularProgressIndicator()),
-              );
-            }
-
-            if (authState is AuthSuccess) {
-              return const Homepage();
-            }
-
-            if (authState is AuthUnauthenticated) {
-              return const Login();
-            }
-
-            if (authState is AuthFailure) {
-              return Scaffold(
-                body: Center(child: Text(authState.message)),
-              );
-            }
-
-            return const Login();
-          },
-        );
       },
+      child: BlocBuilder<OnboardingBloc, OnboardingState>(
+        builder: (context, onboardingState) {
+          if (onboardingState is OnboardingInitial) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+
+          if (onboardingState is OnboardingRequired) {
+            return const OnboardingView();
+          }
+
+         
+          return BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, authState) {
+              if (authState is AuthInitial || authState is AuthLoading) {
+                return const Scaffold(
+                  body: Center(child: CircularProgressIndicator()),
+                );
+              }
+
+              if (authState is AuthSuccess) {
+                return const Homepage();
+              }
+
+              if (authState is AuthUnauthenticated) {
+                return const Login();
+              }
+
+              if (authState is AuthFailure) {
+                return Scaffold(
+                  body: Center(child: Text(authState.message)),
+                );
+              }
+
+              return const Login();
+            },
+          );
+        },
+      ),
     );
   }
 }

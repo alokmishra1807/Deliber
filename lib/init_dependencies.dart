@@ -7,6 +7,9 @@ import 'package:deliber/features/landing/data/datasources/onboarding_local_sourc
 import 'package:deliber/features/landing/domain/usecases/check_onboarding_usecase.dart';
 import 'package:deliber/features/landing/domain/usecases/complete_onboarding_usecase.dart';
 import 'package:deliber/features/landing/presentation/bloc/onboarding_bloc.dart';
+import 'package:deliber/features/location/data/location_service.dart';
+import 'package:deliber/features/location/domain/location_usecase.dart';
+import 'package:deliber/features/location/presentation/bloc/location_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -30,6 +33,7 @@ Future<void> initDependencies() async {
 
   _initAuth();
   _initOnboarding();
+  _initLocation();
 }
 
 void _initAuth() {
@@ -89,5 +93,19 @@ void _initOnboarding() {
 
   serviceLocator.registerFactory<OnboardingBloc>(
     () => OnboardingBloc(serviceLocator(), serviceLocator()),
+  );
+}
+
+void _initLocation() {
+  serviceLocator.registerLazySingleton<LocationService>(
+    () => LocationService(),
+  );
+
+  serviceLocator.registerLazySingleton<RequestLocationUseCase>(
+    () => RequestLocationUseCase(serviceLocator()),
+  );
+
+  serviceLocator.registerFactory<LocationBloc>(
+    () => LocationBloc(serviceLocator()),
   );
 }
