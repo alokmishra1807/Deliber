@@ -1,4 +1,5 @@
 import 'package:deliber/features/home/presentation/widget/bottomsheet.dart';
+import 'package:deliber/features/home/presentation/widget/current_location_card.dart';
 import 'package:deliber/features/home/presentation/widget/sendparcel.dart';
 import 'package:deliber/features/location/presentation/bloc/location_bloc.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,6 @@ class Homepage extends StatefulWidget {
   State<Homepage> createState() => HomepageState();
 }
 
-
 class HomepageState extends State<Homepage> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
@@ -30,18 +30,14 @@ class HomepageState extends State<Homepage> {
     return Scaffold(
       body: Stack(
         children: [
-         
           BlocListener<LocationBloc, LocationState>(
             listener: (context, state) async {
-              if (state is LocationGranted) {
+              if (state is LocationLoaded) {
                 final controller = await _controller.future;
                 await controller.animateCamera(
                   CameraUpdate.newCameraPosition(
                     CameraPosition(
-                      target: LatLng(
-                        state.location.latitude!,
-                        state.location.longitude!,
-                      ),
+                      target: LatLng(state.latitude, state.longitude),
                       zoom: 15,
                     ),
                   ),
@@ -59,20 +55,48 @@ class HomepageState extends State<Homepage> {
             ),
           ),
 
-          
-         Positioned.fill(
-  child: BottomSheetWidget(
-    onTap: () {
-      showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (_) => const Sendparcel(),
-      );
-    },
-  ),
-),
+          Positioned(
+            top: 50,
+            left: 10,
+            
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              decoration:  BoxDecoration(
+                shape: BoxShape.rectangle,
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: const [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 10,
+                offset: Offset(0, 4),
+              ),
+            ],
 
+              ),
+              child: Icon(Icons.menu_rounded),
+            ),
+          ),
+
+          Positioned(
+            top: 50,
+            left: 60,
+            right: 16,
+            child: CurrentLocationCard(),
+          ),
+
+          Positioned.fill(
+            child: BottomSheetWidget(
+              onTap: () {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (_) => const Sendparcel(),
+                );
+              },
+            ),
+          ),
         ],
       ),
     );

@@ -1,8 +1,5 @@
 part of 'location_bloc.dart';
 
-
-
-@immutable
-sealed class LocationEvent {}
+abstract class LocationEvent {}
 
 class RequestLocation extends LocationEvent {}

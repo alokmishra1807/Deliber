@@ -6,3 +6,7 @@ abstract class Failure {
 class AuthFailure extends Failure {
   const AuthFailure(String message) : super(message);
 }
+
+class LocationFailure extends Failure {
+  const LocationFailure(String message) : super(message);
+}

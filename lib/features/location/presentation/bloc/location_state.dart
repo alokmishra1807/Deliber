@@ -1,20 +1,25 @@
 part of 'location_bloc.dart';
 
-@immutable
-sealed class LocationState {}
+abstract class LocationState {}
 
-final class LocationInitial extends LocationState {}
+class LocationInitial extends LocationState {}
 
-final class LocationLoading extends LocationState {}
+class LocationLoading extends LocationState {}
 
-class LocationGranted extends LocationState {
-  final LocationData location;
-  LocationGranted(this.location);
+class LocationLoaded extends LocationState {
+  final double latitude;
+  final double longitude;
+  final String address;
+
+  LocationLoaded({
+    required this.latitude,
+    required this.longitude,
+    required this.address,
+  });
 }
-
-class LocationDenied extends LocationState {}
 
 class LocationFailure extends LocationState {
   final String message;
+
   LocationFailure(this.message);
 }

@@ -7,8 +7,14 @@ import 'package:deliber/features/landing/data/datasources/onboarding_local_sourc
 import 'package:deliber/features/landing/domain/usecases/check_onboarding_usecase.dart';
 import 'package:deliber/features/landing/domain/usecases/complete_onboarding_usecase.dart';
 import 'package:deliber/features/landing/presentation/bloc/onboarding_bloc.dart';
-import 'package:deliber/features/location/data/location_service.dart';
-import 'package:deliber/features/location/domain/location_usecase.dart';
+import 'package:deliber/features/location/data/datasources/geo_coding_remote_datasource.dart';
+import 'package:deliber/features/location/data/datasources/location_local_datasource.dart';
+import 'package:deliber/features/location/data/repository/location_repository_imp.dart';
+import 'package:deliber/features/location/domain/repositories/location_repository.dart';
+
+import 'package:deliber/features/location/domain/usecase/get_address.dart';
+import 'package:deliber/features/location/domain/usecase/get_location.dart';
+
 import 'package:deliber/features/location/presentation/bloc/location_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -22,6 +28,7 @@ import 'package:deliber/features/auth/domain/repositories/auth_repository.dart';
 import 'package:deliber/features/auth/domain/usecases/sigin_usecase.dart';
 
 import 'package:deliber/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final serviceLocator = GetIt.instance;
@@ -30,9 +37,10 @@ Future<void> initDependencies() async {
   await Firebase.initializeApp();
   final prefs = await SharedPreferences.getInstance();
   serviceLocator.registerLazySingleton<SharedPreferences>(() => prefs);
-
-  _initAuth();
+ 
   _initOnboarding();
+  _initAuth();
+
   _initLocation();
 }
 
@@ -97,15 +105,41 @@ void _initOnboarding() {
 }
 
 void _initLocation() {
-  serviceLocator.registerLazySingleton<LocationService>(
-    () => LocationService(),
+  serviceLocator.registerLazySingleton<Location>(
+  () => Location(),
+);
+
+  /// Data sources
+  serviceLocator.registerLazySingleton<LocationLocalDataSource>(
+    () => LocationLocalDataSourceImpl(serviceLocator<Location>()),
   );
 
-  serviceLocator.registerLazySingleton<RequestLocationUseCase>(
-    () => RequestLocationUseCase(serviceLocator()),
+  serviceLocator.registerLazySingleton<GeocodingRemoteDataSource>(
+    () => GeocodingRemoteDataSourceImpl(),
   );
 
+  /// Repository
+  serviceLocator.registerLazySingleton<LocationRepository>(
+    () => LocationRepositoryImp(
+      serviceLocator<GeocodingRemoteDataSource>(),
+      serviceLocator<LocationLocalDataSource>(),
+    ),
+  );
+
+  /// Use cases
+  serviceLocator.registerLazySingleton<GetLocationUsecase>(
+    () => GetLocationUsecase(serviceLocator()),
+  );
+
+  serviceLocator.registerLazySingleton<GetAddressUsecase>(
+    () => GetAddressUsecase(serviceLocator()),
+  );
+
+  /// Bloc
   serviceLocator.registerFactory<LocationBloc>(
-    () => LocationBloc(serviceLocator()),
+    () => LocationBloc(
+      getLocationUsecase: serviceLocator(),
+      getAddressUsecase: serviceLocator(),
+    ),
   );
 }

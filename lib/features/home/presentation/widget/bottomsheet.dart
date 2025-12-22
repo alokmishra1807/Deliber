@@ -4,11 +4,7 @@ import 'package:flutter/material.dart';
 
 class BottomSheetWidget extends StatelessWidget {
   final VoidCallback onTap;
-  const BottomSheetWidget({
-    Key? key,
-    required this.onTap
-    
-  }) : super(key: key);
+  const BottomSheetWidget({Key? key, required this.onTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -72,9 +68,16 @@ class BottomSheetWidget extends StatelessWidget {
                         ),
                       ],
                     ),
+
                   ),
                 ),
               ),
+              SizedBox(height: 20,),
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: Text('Recent Search',style: TextStyle(fontSize: 18,fontWeight: FontWeight.w600),),
+                
+              )
             ],
           ),
         );
