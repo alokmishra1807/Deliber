@@ -1,5 +1,5 @@
-import 'package:deliber/features/landing/domain/usecases/check_onboarding_usecase.dart';
-import 'package:deliber/features/landing/domain/usecases/complete_onboarding_usecase.dart';
+import 'package:deliber/features/onboarding/domain/usecases/check_onboarding_usecase.dart';
+import 'package:deliber/features/onboarding/domain/usecases/complete_onboarding_usecase.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

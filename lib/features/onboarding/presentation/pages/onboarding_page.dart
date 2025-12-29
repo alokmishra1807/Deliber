@@ -1,5 +1,5 @@
-import 'package:deliber/features/landing/presentation/bloc/onboarding_bloc.dart';
-import 'package:deliber/features/landing/presentation/widgets/onboarding_material.dart';
+import 'package:deliber/features/onboarding/presentation/bloc/onboarding_bloc.dart';
+import 'package:deliber/features/onboarding/presentation/widgets/onboarding_material.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
