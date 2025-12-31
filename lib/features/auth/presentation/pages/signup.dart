@@ -144,7 +144,6 @@ class _SignupPageState extends State<SignupPage> {
                       ),
                       const SizedBox(height: 20),
                       DropdownButtonFormField<String>(
-                        
                         initialValue: _selectedGender,
                         onChanged: isLoading
                             ? null
@@ -182,6 +181,7 @@ class _SignupPageState extends State<SignupPage> {
                         child: AuthGradientButton(
                           onTap: _handleSignUp,
                           buttonText: 'Sign Up',
+                          isLoading: isLoading,
                         ),
                       ),
                       const SizedBox(height: 20),

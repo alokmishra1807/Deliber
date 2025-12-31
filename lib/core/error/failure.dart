@@ -10,3 +10,11 @@ class AuthFailure extends Failure {
 class LocationFailure extends Failure {
   const LocationFailure(String message) : super(message);
 }
+
+class MessageFailure extends Failure {
+  const MessageFailure(String message) : super(message);
+}
+
+class UserFailure extends Failure {
+  const UserFailure(String message) : super(message);
+}

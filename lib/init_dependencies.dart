@@ -1,18 +1,12 @@
+import 'package:deliber/core/services/socket_service.dart';
 import 'package:deliber/features/onboarding/data/datasources/onboarding_local_sources..dart';
 
 import 'package:deliber/features/onboarding/data/datasources/onboarding_local_sources_imp.dart';
 import 'package:deliber/features/onboarding/domain/usecases/check_onboarding_usecase.dart';
 import 'package:deliber/features/onboarding/domain/usecases/complete_onboarding_usecase.dart';
 import 'package:deliber/features/onboarding/presentation/bloc/onboarding_bloc.dart';
-import 'package:deliber/features/location/data/datasources/geo_coding_remote_datasource.dart';
-import 'package:deliber/features/location/data/datasources/location_local_datasource.dart';
-import 'package:deliber/features/location/data/repository/location_repository_imp.dart';
-import 'package:deliber/features/location/domain/repositories/location_repository.dart';
 
-import 'package:deliber/features/location/domain/usecase/get_address.dart';
-import 'package:deliber/features/location/domain/usecase/get_location.dart';
 
-import 'package:deliber/features/location/presentation/bloc/location_bloc.dart';
 import 'package:deliber/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:deliber/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:deliber/features/auth/data/datasources/auth_remote_data_source_imp.dart';
@@ -22,10 +16,18 @@ import 'package:deliber/features/auth/domain/usecases/get_cached_user_usecase.da
 import 'package:deliber/features/auth/domain/usecases/login_usecase.dart';
 import 'package:deliber/features/auth/domain/usecases/signup_usecase.dart';
 import 'package:deliber/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:deliber/features/messaging/data/datasources/message_remote_datasource.dart';
+import 'package:deliber/features/messaging/data/datasources/message_remote_datasource_impl.dart';
+import 'package:deliber/features/messaging/data/repositories/message_repository_impl.dart';
+import 'package:deliber/features/messaging/domain/repositories/message_repository.dart';
+import 'package:deliber/features/messaging/domain/usecases/get_messages_usecase.dart';
+import 'package:deliber/features/messaging/domain/usecases/get_users_usecase.dart';
+import 'package:deliber/features/messaging/domain/usecases/send_message_usecase.dart';
+import 'package:deliber/features/messaging/presentation/bloc/message_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:location/location.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 final serviceLocator = GetIt.instance;
@@ -36,11 +38,11 @@ Future<void> initDependencies() async {
 
   _initAuth();
   _initOnboarding();
-  _initLocation();
+  
+  _initMessaging();
 }
 
 void _initAuth() {
-  // Data Sources
   serviceLocator.registerLazySingleton<AuthRemoteDataSource>(
     () => AuthRemoteDataSourceImpl(http.Client()),
   );
@@ -49,12 +51,10 @@ void _initAuth() {
     () => AuthLocalDataSourceImpl(serviceLocator()),
   );
 
-  // Repository
   serviceLocator.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(serviceLocator(), serviceLocator()),
   );
 
-  // Use Cases
   serviceLocator.registerLazySingleton<UserLogin>(
     () => UserLogin(serviceLocator()),
   );
@@ -67,7 +67,6 @@ void _initAuth() {
     () => GetCachedUserUseCase(serviceLocator()),
   );
 
-  // Bloc
   serviceLocator.registerFactory<AuthBloc>(
     () => AuthBloc(
       userLogin: serviceLocator(),
@@ -95,40 +94,37 @@ void _initOnboarding() {
   );
 }
 
-void _initLocation() {
-  serviceLocator.registerLazySingleton<Location>(() => Location());
 
-  /// Data sources
-  serviceLocator.registerLazySingleton<LocationLocalDataSource>(
-    () => LocationLocalDataSourceImpl(serviceLocator<Location>()),
+
+void _initMessaging() {
+  serviceLocator.registerLazySingleton<SocketService>(() => SocketService());
+
+  serviceLocator.registerLazySingleton<MessageRemoteDataSource>(
+    () => MessageRemoteDataSourceImpl(http.Client()),
   );
 
-  serviceLocator.registerLazySingleton<GeocodingRemoteDataSource>(
-    () => GeocodingRemoteDataSourceImpl(),
+  serviceLocator.registerLazySingleton<MessageRepository>(
+    () => MessageRepositoryImpl(serviceLocator(), serviceLocator()),
   );
 
-  /// Repository
-  serviceLocator.registerLazySingleton<LocationRepository>(
-    () => LocationRepositoryImp(
-      serviceLocator<GeocodingRemoteDataSource>(),
-      serviceLocator<LocationLocalDataSource>(),
-    ),
+  serviceLocator.registerLazySingleton<GetUsersUseCase>(
+    () => GetUsersUseCase(serviceLocator()),
   );
 
-  /// Use cases
-  serviceLocator.registerLazySingleton<GetLocationUsecase>(
-    () => GetLocationUsecase(serviceLocator()),
+  serviceLocator.registerLazySingleton<GetMessagesUseCase>(
+    () => GetMessagesUseCase(serviceLocator()),
   );
 
-  serviceLocator.registerLazySingleton<GetAddressUsecase>(
-    () => GetAddressUsecase(serviceLocator()),
+  serviceLocator.registerLazySingleton<SendMessageUseCase>(
+    () => SendMessageUseCase(serviceLocator()),
   );
 
-  /// Bloc
-  serviceLocator.registerFactory<LocationBloc>(
-    () => LocationBloc(
-      getLocationUsecase: serviceLocator(),
-      getAddressUsecase: serviceLocator(),
+  serviceLocator.registerFactory<MessageBloc>(
+    () => MessageBloc(
+      getUsersUseCase: serviceLocator(),
+      getMessagesUseCase: serviceLocator(),
+      sendMessageUseCase: serviceLocator(),
+      socketService: serviceLocator(),
     ),
   );
 }

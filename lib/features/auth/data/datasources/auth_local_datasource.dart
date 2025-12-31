@@ -23,8 +23,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   Future<void> cacheUser(AuthModel authModel) async {
     final userJson = jsonEncode(authModel.toMap());
     await sharedPreferences.setString(_userKey, userJson);
-
-    // Also cache the token
     if (authModel.token.isNotEmpty) {
       await sharedPreferences.setString(_tokenKey, authModel.token);
     }

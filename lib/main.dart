@@ -1,9 +1,10 @@
 import 'package:deliber/features/onboarding/presentation/bloc/onboarding_bloc.dart';
 import 'package:deliber/features/onboarding/presentation/pages/onboarding_page.dart';
-import 'package:deliber/features/location/presentation/bloc/location_bloc.dart';
+
 import 'package:deliber/features/home/presentation/pages/home.dart';
 import 'package:deliber/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:deliber/features/auth/presentation/pages/login.dart';
+import 'package:deliber/features/messaging/presentation/bloc/message_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -27,13 +28,12 @@ class MyApp extends StatelessWidget {
           create: (_) =>
               serviceLocator<OnboardingBloc>()..add(CheckOnboarding()),
         ),
-        BlocProvider<LocationBloc>(
-          create: (_) => serviceLocator<LocationBloc>(),
-        ),
+      
         BlocProvider<AuthBloc>(
           create: (_) =>
               serviceLocator<AuthBloc>()..add(const CheckAuthStatusEvent()),
         ),
+        BlocProvider<MessageBloc>(create: (_) => serviceLocator<MessageBloc>()),
       ],
       child: MaterialApp(
         title: 'Deliber',
@@ -66,19 +66,16 @@ class AppGate extends StatelessWidget {
 
         return BlocBuilder<AuthBloc, AuthState>(
           builder: (context, authState) {
-            
             if (authState is AuthLoading) {
               return const Scaffold(
                 body: Center(child: CircularProgressIndicator()),
               );
             }
 
-            
             if (authState is AuthSuccess) {
               return const HomePage();
             }
 
-            
             return const LoginPage();
           },
         );

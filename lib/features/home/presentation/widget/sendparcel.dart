@@ -14,55 +14,37 @@ class Sendparcel extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20),
           decoration: const BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(20),
-            ),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
           child: ListView(
             controller: scrollController,
             children: [
               const SizedBox(height: 12),
 
-              
-              
-
               const SizedBox(height: 24),
 
-              
               Center(
-                child: Image.asset(
-                  'assets/images/parcel.png',
-                  height: 70,
-                ),
+                child: Image.asset('assets/images/parcel.png', height: 70),
               ),
 
               const SizedBox(height: 16),
 
-              /// Title
               const Text(
                 'Send and Receive Packages with Ease',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
               ),
 
               const SizedBox(height: 8),
 
-              /// Subtitle
               const Text(
                 'Our parcel services make sending and receiving packages simple and convenient.',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black54,
-                ),
+                style: TextStyle(fontSize: 14, color: Colors.black54),
               ),
 
               const SizedBox(height: 24),
 
-              /// Primary button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -77,17 +59,13 @@ class Sendparcel extends StatelessWidget {
                   ),
                   child: const Text(
                     'Send Parcel',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
 
               const SizedBox(height: 12),
 
-              /// Secondary button
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton(

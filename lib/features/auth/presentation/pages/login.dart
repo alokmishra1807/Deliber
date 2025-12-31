@@ -18,7 +18,6 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  
 
   @override
   void dispose() {
@@ -42,7 +41,13 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:  Text('Sign In',style: TextStyle(fontWeight: FontWeight.w700,color: const Color.fromARGB(255, 240, 240, 240))),
+        title: Text(
+          'Sign In',
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            color: const Color.fromARGB(255, 240, 240, 240),
+          ),
+        ),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Pallete.gradient1,
@@ -57,7 +62,6 @@ class _LoginPageState extends State<LoginPage> {
               ),
             );
           } else if (state is AuthSuccess) {
-            
             Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(builder: (_) => const HomePage()),
               (_) => false,
@@ -99,12 +103,18 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       const SizedBox(height: 40),
-                    
-                      AuthField(hintText: 'Username', controller: _usernameController),
-                      const SizedBox(height: 20),
-                   
 
-                      AuthField(hintText: 'Password', controller: _passwordController,isObscureText: true,),
+                      AuthField(
+                        hintText: 'Username',
+                        controller: _usernameController,
+                      ),
+                      const SizedBox(height: 20),
+
+                      AuthField(
+                        hintText: 'Password',
+                        controller: _passwordController,
+                        isObscureText: true,
+                      ),
                       const SizedBox(height: 30),
                       SizedBox(
                         width: double.infinity,
@@ -112,9 +122,7 @@ class _LoginPageState extends State<LoginPage> {
                         child: AuthGradientButton(
                           onTap: _handleLogin,
                           buttonText: 'Login',
-                          
-                          
-                            
+                          isLoading: isLoading,
                         ),
                       ),
                       const SizedBox(height: 20),

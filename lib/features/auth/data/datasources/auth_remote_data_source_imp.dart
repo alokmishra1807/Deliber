@@ -34,24 +34,37 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'gender': gender,
         }),
       );
-      final resBody = jsonDecode(response.body);
-      final resBodyMap = (resBody is Map<String, dynamic>)
-          ? resBody
-          : <String, dynamic>{};
+
       if (response.statusCode < 200 || response.statusCode >= 300) {
-        return Left(
-          AuthFailure((resBodyMap['error'] ?? 'Signup failed').toString()),
-        );
+        try {
+          final resBody = jsonDecode(response.body);
+          final resBodyMap = (resBody is Map<String, dynamic>)
+              ? resBody
+              : <String, dynamic>{};
+          return Left(
+            AuthFailure((resBodyMap['error'] ?? 'Signup failed').toString()),
+          );
+        } catch (_) {
+          return Left(AuthFailure('Signup failed: ${response.statusCode}'));
+        }
       }
 
-      // Backend may wrap data
-      final data = (resBodyMap['data'] is Map<String, dynamic>)
-          ? resBodyMap['data'] as Map<String, dynamic>
-          : resBodyMap;
+      try {
+        final resBody = jsonDecode(response.body);
+        final resBodyMap = (resBody is Map<String, dynamic>)
+            ? resBody
+            : <String, dynamic>{};
 
-      return Right(AuthModel.fromMap(data));
+        final data = (resBodyMap['data'] is Map<String, dynamic>)
+            ? resBodyMap['data'] as Map<String, dynamic>
+            : resBodyMap;
+
+        return Right(AuthModel.fromMap(data));
+      } catch (e) {
+        return Left(AuthFailure('Invalid response format: ${e.toString()}'));
+      }
     } catch (e) {
-      return Left(AuthFailure(e.toString()));
+      return Left(AuthFailure('Network error: ${e.toString()}'));
     }
   }
 
@@ -69,23 +82,37 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
         body: jsonEncode({'username': username, 'password': password}),
       );
-      final resBody = jsonDecode(response.body);
-      final resBodyMap = (resBody is Map<String, dynamic>)
-          ? resBody
-          : <String, dynamic>{};
+
       if (response.statusCode < 200 || response.statusCode >= 300) {
-        return Left(
-          AuthFailure((resBodyMap['error'] ?? 'Login failed').toString()),
-        );
+        try {
+          final resBody = jsonDecode(response.body);
+          final resBodyMap = (resBody is Map<String, dynamic>)
+              ? resBody
+              : <String, dynamic>{};
+          return Left(
+            AuthFailure((resBodyMap['error'] ?? 'Login failed').toString()),
+          );
+        } catch (_) {
+          return Left(AuthFailure('Login failed: ${response.statusCode}'));
+        }
       }
 
-      final data = (resBodyMap['data'] is Map<String, dynamic>)
-          ? resBodyMap['data'] as Map<String, dynamic>
-          : resBodyMap;
+      try {
+        final resBody = jsonDecode(response.body);
+        final resBodyMap = (resBody is Map<String, dynamic>)
+            ? resBody
+            : <String, dynamic>{};
 
-      return Right(AuthModel.fromMap(data));
+        final data = (resBodyMap['data'] is Map<String, dynamic>)
+            ? resBodyMap['data'] as Map<String, dynamic>
+            : resBodyMap;
+
+        return Right(AuthModel.fromMap(data));
+      } catch (e) {
+        return Left(AuthFailure('Invalid response format: ${e.toString()}'));
+      }
     } catch (e) {
-      return Left(AuthFailure(e.toString()));
+      return Left(AuthFailure('Network error: ${e.toString()}'));
     }
   }
 }
